@@ -1,0 +1,87 @@
+{% extends "network/layout.html" %}
+{% block body %}
+<div class="container mt-4">
+
+  <!-- Formulário de Follow/Unfollow -->
+  <form method="POST" class="mb-4">
+    {% csrf_token %}
+    <div class="d-flex align-items-center mb-4">
+      <h1 class="me-4">User: {{ users }}</h1>
+      {% if users.username != user.username %}
+        {% if not is_following %}
+          <button type="submit" name="Follow" class="btn btn-primary ml-3">
+            Follow
+          </button>
+        {% else %}
+          <button type="submit" name="Unfollow" class="btn btn-danger ml-3">
+            Unfollow
+          </button>
+        {% endif %}
+      {% endif %}
+    </div>
+  </form>
+
+  <!-- Informações de Seguidores e Seguindo -->
+  <div class="mb-4">
+    <p class="lead">Following: <strong>{{ seguindo.count }}</strong></p>
+    <p class="lead">Followers: <strong>{{ seguidor.count }}</strong></p>
+  </div>
+
+  <!-- Lista de Posts -->
+  {% for post in posts %}
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <strong>@{{ post.autor.username }}</strong>
+        <p class="text-muted">{{ post.data_criacao }}</p>
+      </div>
+      
+      <p>{{ post.conteudo }}</p>
+      <p>
+        <!-- Formulário de Like específico para cada post -->
+        <form method="POST" class="mb-0" onsubmit="return false;">
+          {% csrf_token %}
+          <input type="hidden" name="post_id" value="{{ post.id }}">
+          <button
+            class="btn {% if user in post.curtidas.all %}btn-danger{% else %}btn-primary{% endif %} like-button"
+            data-post-id="{{ post.id }}"
+            onclick="toggleLike(this)"
+          >
+            👍 <span class="like-count">{{ post.curtidas.count }}</span>
+          </button>
+        </form>
+      </p>
+      
+    </div>
+  </div>
+  {% endfor %}
+  
+</div>
+
+<script>
+  async function toggleLike(button) {
+      const postId = button.getAttribute("data-post-id");
+      const likeCountSpan = button.querySelector(".like-count");
+  
+      const response = await fetch("{% url 'like_post' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+              "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: `post_id=${postId}`
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+          likeCountSpan.textContent = data.like_count;
+          button.classList.toggle("btn-danger", data.liked);
+          button.classList.toggle("btn-primary", !data.liked);
+      } else {
+          alert("Erro ao curtir/descurtir.");
+      }
+  }
+</script>
+
+{% endblock %}
