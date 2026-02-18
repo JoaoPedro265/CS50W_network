@@ -71,10 +71,10 @@ O desafio técnico central deste projeto foi a implementação de relacionamento
 
 <div align="center">
 
-https://github.com/user-attachments/assets/3b7d4622-4170-4a03-99fc-895eb0e018f0
+https://github.com/user-attachments/assets/2308a5e4-c23b-4b0a-862d-cb0955d348c1
 
   <br />
   <p>
-    <a href="https://youtu.be/Z-McM0AQdw0" target="_blank">
+    <a href="https://youtu.be/jY2pVaUCCh8" target="_blank">
       <strong>🚀 <i>Confira a demonstração no YouTube:</i></strong>
     </a>
